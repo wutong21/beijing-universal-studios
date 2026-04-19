@@ -1501,15 +1501,28 @@
         }
 
         var draggedElement = null;
+        var SHOW_SCHEDULE = {};
 
-        var SHOW_SCHEDULE = {
-            '未来水世界': ['12:15', '13:45', '15:35', '16:30', '17:15'],
-            '三强争霸赛': ['11:00', '12:30', '14:00', '15:30', '17:00'],
-            '青蛙合唱团': ['11:30', '13:00', '14:30', '16:00', '17:30'],
-            '环球大巡游': ['17:00'],
-            '不可驯服': ['16:15', '17:45', '19:00', '20:30'],
-            '灯光秀': ['19:30', '19:45', '20:00']
-        };
+        function loadShowScheduleFromPage() {
+            var showCards = document.querySelectorAll('.show-card');
+            showCards.forEach(function(card) {
+                var showName = card.querySelector('.show-name').textContent.replace(/[^\u4e00-\u9fa5a-zA-Z]/g, '');
+                var times = [];
+                var chips = card.querySelectorAll('.chip');
+                chips.forEach(function(chip) {
+                    times.push(chip.textContent.trim());
+                });
+                
+                for (var key in {
+                    '未来水世界':1, '三强争霸赛':1, '青蛙合唱团':1,
+                    '环球大巡游':1, '不可驯服':1, '灯光秀':1, '城堡灯光秀':1
+                }) {
+                    if (showName.indexOf(key) >= 0) {
+                        SHOW_SCHEDULE[key] = times;
+                    }
+                }
+            });
+        }
 
         function initDragAndDrop() {
             var modules = document.querySelectorAll('.route-module');
@@ -1703,8 +1716,10 @@
         }
 
         window.onload = function() {
+            loadShowScheduleFromPage();
             loadSavedProgress();
             initDragAndDrop();
+            recalculateAllTimes();
         };
     </script>
 
