@@ -80,6 +80,67 @@
             display: none;
         }
 
+        .route-module {
+            cursor: grab;
+            user-select: none;
+            transition: all 0.2s ease;
+        }
+
+        .route-module:hover {
+            transform: translateX(4px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .route-module.dragging {
+            opacity: 0.5;
+            transform: scale(1.02);
+            cursor: grabbing;
+        }
+
+        .route-module.drag-over {
+            border-top: 3px solid var(--md-primary);
+        }
+
+        .route-module.fixed-show {
+            border-left: 4px solid #ea4335;
+            background: linear-gradient(90deg, rgba(234,67,53,0.1) 0%, transparent 100%);
+        }
+
+        .route-module.time-conflict {
+            border-left: 4px solid #fbbc04;
+            background: linear-gradient(90deg, rgba(251,188,4,0.2) 0%, transparent 100%);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(251,188,4,0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(251,188,4,0); }
+        }
+
+        .conflict-warning {
+            background: #fef7e0;
+            border: 1px solid #fbbc04;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin: 8px 0;
+            font-size: 12px;
+            color: #d97706;
+        }
+
+        .conflict-warning strong {
+            color: #ea4335;
+        }
+
+        .drag-hint {
+            text-align: center;
+            font-size: 11px;
+            color: var(--md-on-surface-variant);
+            padding: 6px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
         h1 {
             font-family: 'Google Sans', 'Roboto', sans-serif;
             font-size: 42px;
@@ -744,11 +805,17 @@
         <div class="compact-route">
             <div class="route-header">
                 <div class="route-title">🗺️ 一日游路线总览</div>
-                <div class="route-subtitle">交互式 · 点击完成记录时间</div>
+                <div class="route-subtitle">拖拽排序 · 自动计算时间 · 演出冲突提醒</div>
             </div>
 
-            <div class="route-list">
-                <div class="route-module" data-id="1" data-plan-end="08:45">
+            <div class="drag-hint">
+                👆 按住模块上下拖动调整顺序 | 🔴 红边标记 = 固定演出场次不可错过
+            </div>
+
+            <div id="conflict-container"></div>
+
+            <div class="route-list" id="route-list">
+                <div class="route-module" data-id="1" data-plan-end="08:45" data-duration="45" draggable="true">
                     <div class="module-content">
                         <div class="module-info">
                             <div class="route-module-header">
@@ -761,7 +828,7 @@
                     <div class="time-status" id="status-1"></div>
                 </div>
 
-                <div class="route-module" data-id="2" data-plan-end="11:00">
+                <div class="route-module" data-id="2" data-plan-end="11:00" data-duration="135" draggable="true">
                     <div class="module-content">
                         <div class="module-info">
                             <div class="route-module-header">
@@ -780,7 +847,7 @@
                     <div class="time-status" id="status-2"></div>
                 </div>
 
-                <div class="route-module" data-id="3" data-plan-end="11:48">
+                <div class="route-module" data-id="3" data-plan-end="11:48" data-duration="48" draggable="true">
                     <div class="module-content">
                         <div class="module-info">
                             <div class="route-module-header">
@@ -797,7 +864,7 @@
                     <div class="time-status" id="status-3"></div>
                 </div>
 
-                <div class="route-module" data-id="4" data-plan-end="12:26">
+                <div class="route-module" data-id="4" data-plan-end="12:26" data-duration="38" draggable="true">
                     <div class="module-content">
                         <div class="module-info">
                             <div class="route-module-header">
@@ -814,7 +881,7 @@
                     <div class="time-status" id="status-4"></div>
                 </div>
 
-                <div class="route-module" data-id="5" data-plan-end="13:06">
+                <div class="route-module" data-id="5" data-plan-end="13:06" data-duration="40" draggable="true">
                     <div class="module-content">
                         <div class="module-info">
                             <div class="route-module-header">
@@ -831,7 +898,7 @@
                     <div class="time-status" id="status-5"></div>
                 </div>
 
-                <div class="route-module" data-id="6" data-plan-end="14:15">
+                <div class="route-module fixed-show" data-id="6" data-plan-end="14:15" data-duration="69" data-fixed-time="13:45" draggable="true">
                     <div class="module-content">
                         <div class="module-info">
                             <div class="route-module-header">
@@ -847,7 +914,7 @@
                     <div class="time-status" id="status-6"></div>
                 </div>
 
-                <div class="route-module" data-id="7" data-plan-end="15:45">
+                <div class="route-module fixed-show" data-id="7" data-plan-end="15:45" data-duration="90" data-fixed-time="15:30" draggable="true">
                     <div class="module-content">
                         <div class="module-info">
                             <div class="route-module-header">
@@ -864,7 +931,7 @@
                     <div class="time-status" id="status-7"></div>
                 </div>
 
-                <div class="route-module" data-id="8" data-plan-end="16:15">
+                <div class="route-module fixed-show" data-id="8" data-plan-end="16:15" data-duration="30" data-fixed-time="16:00" draggable="true">
                     <div class="module-content">
                         <div class="module-info">
                             <div class="route-module-header">
@@ -880,7 +947,7 @@
                     <div class="time-status" id="status-8"></div>
                 </div>
 
-                <div class="route-module" data-id="9" data-plan-end="17:40">
+                <div class="route-module fixed-show" data-id="9" data-plan-end="17:40" data-duration="85" data-fixed-time="17:00" draggable="true">
                     <div class="module-content">
                         <div class="module-info">
                             <div class="route-module-header">
@@ -898,7 +965,7 @@
                     <div class="time-status" id="status-9"></div>
                 </div>
 
-                <div class="route-module" data-id="10" data-plan-end="18:45">
+                <div class="route-module" data-id="10" data-plan-end="18:45" data-duration="65" draggable="true">
                     <div class="module-content">
                         <div class="module-info">
                             <div class="route-module-header">
@@ -915,7 +982,7 @@
                     <div class="time-status" id="status-10"></div>
                 </div>
 
-                <div class="route-module" data-id="11" data-plan-end="19:10">
+                <div class="route-module" data-id="11" data-plan-end="19:10" data-duration="25" draggable="true">
                     <div class="module-content">
                         <div class="module-info">
                             <div class="route-module-header">
@@ -932,7 +999,7 @@
                     <div class="time-status" id="status-11"></div>
                 </div>
 
-                <div class="route-module" data-id="12" data-plan-end="19:40">
+                <div class="route-module" data-id="12" data-plan-end="19:40" data-duration="30" draggable="true">
                     <div class="module-content">
                         <div class="module-info">
                             <div class="route-module-header">
@@ -948,7 +1015,7 @@
                     <div class="time-status" id="status-12"></div>
                 </div>
 
-                <div class="route-module" data-id="13" data-plan-end="20:40">
+                <div class="route-module fixed-show" data-id="13" data-plan-end="20:40" data-duration="60" data-fixed-time="20:30" draggable="true">
                     <div class="module-content">
                         <div class="module-info">
                             <div class="route-module-header">
@@ -964,7 +1031,7 @@
                     <div class="time-status" id="status-13"></div>
                 </div>
 
-                <div class="route-module" data-id="14" data-plan-end="22:00">
+                <div class="route-module fixed-show" data-id="14" data-plan-end="22:00" data-duration="80" data-fixed-time="21:00" draggable="true">
                     <div class="module-content">
                         <div class="module-info">
                             <div class="route-module-header">
@@ -981,7 +1048,7 @@
                     <div class="time-status" id="status-14"></div>
                 </div>
 
-                <div class="route-module" data-id="15" data-plan-end="24:00">
+                <div class="route-module" data-id="15" data-plan-end="24:00" data-duration="120" draggable="true">
                     <div class="module-content">
                         <div class="module-info">
                             <div class="route-module-header">
@@ -1433,6 +1500,127 @@
             }
         }
 
+        var draggedElement = null;
+
+        function initDragAndDrop() {
+            var modules = document.querySelectorAll('.route-module');
+            modules.forEach(function(module) {
+                module.addEventListener('dragstart', handleDragStart);
+                module.addEventListener('dragend', handleDragEnd);
+                module.addEventListener('dragover', handleDragOver);
+                module.addEventListener('drop', handleDrop);
+                module.addEventListener('dragleave', handleDragLeave);
+            });
+        }
+
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+            document.querySelectorAll('.route-module').forEach(function(mod) {
+                mod.classList.remove('drag-over');
+            });
+            recalculateAllTimes();
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            
+            if (this !== draggedElement) {
+                this.classList.add('drag-over');
+            }
+            return false;
+        }
+
+        function handleDragLeave(e) {
+            this.classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.stopPropagation();
+            this.classList.remove('drag-over');
+            
+            if (this !== draggedElement) {
+                var allModules = Array.from(document.querySelectorAll('.route-module'));
+                var draggedIndex = allModules.indexOf(draggedElement);
+                var targetIndex = allModules.indexOf(this);
+                
+                if (draggedIndex < targetIndex) {
+                    this.parentNode.insertBefore(draggedElement, this.nextSibling);
+                } else {
+                    this.parentNode.insertBefore(draggedElement, this);
+                }
+            }
+            return false;
+        }
+
+        function minutesToTime(minutes) {
+            var h = Math.floor(minutes / 60);
+            var m = minutes % 60;
+            return (h < 10 ? '0' + h : h) + ':' + (m < 10 ? '0' + m : m);
+        }
+
+        function timeToMinutes(timeStr) {
+            var parts = timeStr.split(':');
+            return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+        }
+
+        function recalculateAllTimes() {
+            var modules = document.querySelectorAll('.route-module');
+            var currentTime = 8 * 60;
+            var conflicts = [];
+            
+            document.getElementById('conflict-container').innerHTML = '';
+            modules.forEach(function(mod) {
+                mod.classList.remove('time-conflict');
+            });
+
+            modules.forEach(function(module) {
+                var duration = parseInt(module.getAttribute('data-duration')) || 30;
+                var fixedTime = module.getAttribute('data-fixed-time');
+                var id = module.getAttribute('data-id');
+                var moduleTitle = module.querySelector('.module-title').textContent;
+                
+                var startTime = currentTime;
+                var endTime = currentTime + duration;
+                
+                if (fixedTime) {
+                    var fixedMinutes = timeToMinutes(fixedTime);
+                    var timeDiff = fixedMinutes - startTime;
+                    
+                    if (timeDiff < 0) {
+                        conflicts.push({
+                            module: module,
+                            title: moduleTitle,
+                            fixedTime: fixedTime,
+                            currentArrival: minutesToTime(startTime),
+                            delay: -timeDiff
+                        });
+                        module.classList.add('time-conflict');
+                    }
+                }
+                
+                var timeDisplay = module.querySelector('.module-time');
+                timeDisplay.textContent = minutesToTime(startTime) + '-' + minutesToTime(endTime);
+                
+                currentTime = endTime;
+            });
+
+            if (conflicts.length > 0) {
+                var warningHtml = '<div class="conflict-warning">⚠️ <strong>演出时间冲突提醒：</strong><br>';
+                conflicts.forEach(function(c) {
+                    warningHtml += '• ' + c.title + '：预计 ' + c.currentArrival + ' 到达，赶不上 ' + c.fixedTime + ' 的场次，晚了 ' + c.delay + ' 分钟<br>';
+                });
+                warningHtml += '</div>';
+                document.getElementById('conflict-container').innerHTML = warningHtml;
+            }
+        }
+
         function loadSavedProgress() {
             var data = JSON.parse(localStorage.getItem('universal-progress') || '{}');
 
@@ -1455,7 +1643,10 @@
             updateProgress();
         }
 
-        window.onload = loadSavedProgress;
+        window.onload = function() {
+            loadSavedProgress();
+            initDragAndDrop();
+        };
     </script>
 
 </body>
