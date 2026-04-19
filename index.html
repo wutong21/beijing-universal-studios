@@ -388,6 +388,121 @@
             font-weight: 600;
         }
 
+        .route-module {
+            position: relative;
+        }
+
+        .module-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .module-info {
+            flex: 1;
+        }
+
+        .complete-btn {
+            background: var(--md-primary);
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            margin-left: 8px;
+        }
+
+        .complete-btn:hover {
+            background: #174ea6;
+            transform: scale(1.05);
+        }
+
+        .complete-btn.completed {
+            background: #34a853;
+            pointer-events: none;
+        }
+
+        .route-module.completed {
+            background: #e8f5e8;
+            border-left-color: #34a853;
+            opacity: 0.8;
+        }
+
+        .route-module.completed .module-title,
+        .route-module.completed .detail-item {
+            text-decoration: line-through;
+            color: #5f6368;
+        }
+
+        .time-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 10px;
+            margin-top: 4px;
+            margin-left: 70px;
+        }
+
+        .error-ontime {
+            color: #34a853;
+            font-weight: 600;
+        }
+
+        .error-ahead {
+            color: #1a73e8;
+            font-weight: 600;
+        }
+
+        .error-behind {
+            color: #d93025;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            background: #e8eaed;
+            border-radius: 8px;
+            height: 8px;
+            margin-top: 12px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #34a853 0%, #1a73e8 100%);
+            height: 100%;
+            border-radius: 8px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            font-size: 12px;
+            color: var(--md-secondary);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .reset-btn {
+            background: #f1f3f4;
+            color: #5f6368;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .reset-btn:hover {
+            background: #dadce0;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 16px;
@@ -534,167 +649,266 @@
         <!-- 紧凑路线图 -->
         <div class="compact-route">
             <div class="route-header">
-                <div class="route-title">🗺️ 一日游路线总览</div>              <div class="route-subtitle">一屏看完 · 模块化</div>
+                <div class="route-title">🗺️ 一日游路线总览</div>
+                <div class="route-subtitle">交互式 · 点击完成记录时间</div>
             </div>
 
             <div class="route-list">
-                <div class="route-module">
-                    <div class="route-module-header">
-                        <div class="module-time">08:00-08:45</div>
-                        <div class="module-title">🚪 到达园区等候开门 + 安检入园</div>
+                <div class="route-module" data-id="1" data-plan-end="08:45">
+                    <div class="module-content">
+                        <div class="module-info">
+                            <div class="route-module-header">
+                                <div class="module-time">08:00-08:45</div>
+                                <div class="module-title">🚪 到达园区等候开门 + 安检入园</div>
+                            </div>
+                        </div>
+                        <button class="complete-btn" onclick="markComplete(1)">✓ 完成</button>
                     </div>
+                    <div class="time-status" id="status-1"></div>
                 </div>
 
-                <div class="route-module">
-                    <div class="route-module-header">
-                        <div class="module-time">08:45-10:00</div>
-                        <div class="module-title">🧙 哈利波特区</div>
+                <div class="route-module" data-id="2" data-plan-end="10:00">
+                    <div class="module-content">
+                        <div class="module-info">
+                            <div class="route-module-header">
+                                <div class="module-time">08:45-10:00</div>
+                                <div class="module-title">🧙 哈利波特区</div>
+                            </div>
+                            <div class="module-details">
+                                <div class="detail-item">禁忌之旅</div>
+                                <div class="detail-item">鹰马飞行</div>
+                                <div class="detail-item">三把扫帚用餐</div>
+                                <div class="detail-item">园区逛街</div>
+                            </div>
+                        </div>
+                        <button class="complete-btn" onclick="markComplete(2)">✓ 完成</button>
                     </div>
-                    <div class="module-details">
-                        <div class="detail-item">禁忌之旅</div>
-                        <div class="detail-item">鹰马飞行</div>
-                        <div class="detail-item">三把扫帚用餐</div>
-                        <div class="detail-item">园区逛街</div>
-                    </div>
+                    <div class="time-status" id="status-2"></div>
                 </div>
 
-                <div class="route-module">
-                    <div class="route-module-header">
-                        <div class="module-time">10:00-10:48</div>
-                        <div class="module-title">🦕 侏罗纪世界（步行3分钟）</div>
+                <div class="route-module" data-id="3" data-plan-end="10:48">
+                    <div class="module-content">
+                        <div class="module-info">
+                            <div class="route-module-header">
+                                <div class="module-time">10:00-10:48</div>
+                                <div class="module-title">🦕 侏罗纪世界（步行3分钟）</div>
+                            </div>
+                            <div class="module-details">
+                                <div class="detail-item">飞越侏罗纪</div>
+                                <div class="detail-item">简单逛街</div>
+                            </div>
+                        </div>
+                        <button class="complete-btn" onclick="markComplete(3)">✓ 完成</button>
                     </div>
-                    <div class="module-details">
-                        <div class="detail-item">飞越侏罗纪</div>
-                        <div class="detail-item">简单逛街</div>
-                    </div>
+                    <div class="time-status" id="status-3"></div>
                 </div>
 
-                <div class="route-module">
-                    <div class="route-module-header">
-                        <div class="module-time">10:48-11:26</div>
-                        <div class="module-title">🤖 变形金刚基地（步行3分钟）</div>
+                <div class="route-module" data-id="4" data-plan-end="11:26">
+                    <div class="module-content">
+                        <div class="module-info">
+                            <div class="route-module-header">
+                                <div class="module-time">10:48-11:26</div>
+                                <div class="module-title">🤖 变形金刚基地（步行3分钟）</div>
+                            </div>
+                            <div class="module-details">
+                                <div class="detail-item">火种源争夺战</div>
+                                <div class="detail-item">园区逛街</div>
+                            </div>
+                        </div>
+                        <button class="complete-btn" onclick="markComplete(4)">✓ 完成</button>
                     </div>
-                    <div class="module-details">
-                        <div class="detail-item">火种源争夺战</div>
-                        <div class="detail-item">园区逛街</div>
-                    </div>
+                    <div class="time-status" id="status-4"></div>
                 </div>
 
-                <div class="route-module">
-                    <div class="route-module-header">
-                        <div class="module-time">11:26-12:30</div>
-                        <div class="module-title">🌊 未来水世界（步行10分钟+排队）</div>
+                <div class="route-module" data-id="5" data-plan-end="12:30">
+                    <div class="module-content">
+                        <div class="module-info">
+                            <div class="route-module-header">
+                                <div class="module-time">11:26-12:30</div>
+                                <div class="module-title">🌊 未来水世界（步行10分钟+排队）</div>
+                            </div>
+                            <div class="module-details">
+                                <div class="detail-item"><span class="route-highlight">★ 12:15场次表演</span></div>
+                            </div>
+                        </div>
+                        <button class="complete-btn" onclick="markComplete(5)">✓ 完成</button>
                     </div>
-                    <div class="module-details">
-                        <div class="detail-item"><span class="route-highlight">★ 12:15场次表演</span></div>
-                    </div>
+                    <div class="time-status" id="status-5"></div>
                 </div>
 
-                <div class="route-module">
-                    <div class="route-module-header">
-                        <div class="module-time">12:30-13:10</div>
-                        <div class="module-title">🐼 功夫熊猫园区（步行10分钟）</div>
+                <div class="route-module" data-id="6" data-plan-end="13:10">
+                    <div class="module-content">
+                        <div class="module-info">
+                            <div class="route-module-header">
+                                <div class="module-time">12:30-13:10</div>
+                                <div class="module-title">🐼 功夫熊猫园区（步行10分钟）</div>
+                            </div>
+                            <div class="module-details">
+                                <div class="detail-item">神龙大侠之旅</div>
+                                <div class="detail-item">园区游览</div>
+                            </div>
+                        </div>
+                        <button class="complete-btn" onclick="markComplete(6)">✓ 完成</button>
                     </div>
-                    <div class="module-details">
-                        <div class="detail-item">神龙大侠之旅</div>
-                        <div class="detail-item">园区游览</div>
-                    </div>
+                    <div class="time-status" id="status-6"></div>
                 </div>
 
-                <div class="route-module">
-                    <div class="route-module-header">
-                        <div class="module-time">13:10-14:15</div>
-                        <div class="module-title">⚡ 三强争霸赛（步行30分钟返回）</div>
+                <div class="route-module" data-id="7" data-plan-end="14:15">
+                    <div class="module-content">
+                        <div class="module-info">
+                            <div class="route-module-header">
+                                <div class="module-time">13:10-14:15</div>
+                                <div class="module-title">⚡ 三强争霸赛（步行30分钟返回）</div>
+                            </div>
+                            <div class="module-details">
+                                <div class="detail-item">提前占位</div>
+                                <div class="detail-item"><span class="route-highlight">★ 14:00场次表演</span></div>
+                            </div>
+                        </div>
+                        <button class="complete-btn" onclick="markComplete(7)">✓ 完成</button>
                     </div>
-                    <div class="module-details">
-                        <div class="detail-item">提前占位</div>
-                        <div class="detail-item"><span class="route-highlight">★ 14:00场次表演</span></div>
-                    </div>
+                    <div class="time-status" id="status-7"></div>
                 </div>
 
-                <div class="route-module">
-                    <div class="route-module-header">
-                        <div class="module-time">14:15-14:45</div>
-                        <div class="module-title">🐸 青蛙合唱团</div>
+                <div class="route-module" data-id="8" data-plan-end="14:45">
+                    <div class="module-content">
+                        <div class="module-info">
+                            <div class="route-module-header">
+                                <div class="module-time">14:15-14:45</div>
+                                <div class="module-title">🐸 青蛙合唱团</div>
+                            </div>
+                            <div class="module-details">
+                                <div class="detail-item"><span class="route-highlight">★ 14:30场次表演</span></div>
+                            </div>
+                        </div>
+                        <button class="complete-btn" onclick="markComplete(8)">✓ 完成</button>
                     </div>
-                    <div class="module-details">
-                        <div class="detail-item"><span class="route-highlight">★ 14:30场次表演</span></div>
-                    </div>
+                    <div class="time-status" id="status-8"></div>
                 </div>
 
-                <div class="route-module">
-                    <div class="route-module-header">
-                        <div class="module-time">14:45-15:50</div>
-                        <div class="module-title">💛 小黄人园区（步行20分钟）</div>
+                <div class="route-module" data-id="9" data-plan-end="15:50">
+                    <div class="module-content">
+                        <div class="module-info">
+                            <div class="route-module-header">
+                                <div class="module-time">14:45-15:50</div>
+                                <div class="module-title">💛 小黄人园区（步行20分钟）</div>
+                            </div>
+                            <div class="module-details">
+                                <div class="detail-item">小黄人闹翻天</div>
+                                <div class="detail-item">逛街 + 买小吃 + 休息</div>
+                            </div>
+                        </div>
+                        <button class="complete-btn" onclick="markComplete(9)">✓ 完成</button>
                     </div>
-                    <div class="module-details">
-                        <div class="detail-item">小黄人闹翻天</div>
-                        <div class="detail-item">逛街 + 买小吃 + 休息</div>
-                    </div>
+                    <div class="time-status" id="status-9"></div>
                 </div>
 
-                <div class="route-module">
-                    <div class="route-module-header">
-                        <div class="module-time">15:50-16:15</div>
-                        <div class="module-title">🎬 灯光、摄像、开拍</div>
+                <div class="route-module" data-id="10" data-plan-end="16:15">
+                    <div class="module-content">
+                        <div class="module-info">
+                            <div class="route-module-header">
+                                <div class="module-time">15:50-16:15</div>
+                                <div class="module-title">🎬 灯光、摄像、开拍</div>
+                            </div>
+                            <div class="module-details">
+                                <div class="detail-item">步行5分钟到达</div>
+                                <div class="detail-item">体验电影特效拍摄</div>
+                            </div>
+                        </div>
+                        <button class="complete-btn" onclick="markComplete(10)">✓ 完成</button>
                     </div>
-                    <div class="module-details">
-                        <div class="detail-item">步行5分钟到达</div>
-                        <div class="detail-item">体验电影特效拍摄</div>
-                    </div>
+                    <div class="time-status" id="status-10"></div>
                 </div>
 
-                <div class="route-module">
-                    <div class="route-module-header">
-                        <div class="module-time">16:15-16:45</div>
-                        <div class="module-title">🍽️ 正餐时间</div>
+                <div class="route-module" data-id="11" data-plan-end="16:45">
+                    <div class="module-content">
+                        <div class="module-info">
+                            <div class="route-module-header">
+                                <div class="module-time">16:15-16:45</div>
+                                <div class="module-title">🍽️ 正餐时间</div>
+                            </div>
+                            <div class="module-details">
+                                <div class="detail-item">猪头酒吧 / 哈蒙德餐厅 / 落霞餐厅</div>
+                            </div>
+                        </div>
+                        <button class="complete-btn" onclick="markComplete(11)">✓ 完成</button>
                     </div>
-                    <div class="module-details">
-                        <div class="detail-item">猪头酒吧 / 哈蒙德餐厅 / 落霞餐厅</div>
-                    </div>
+                    <div class="time-status" id="status-11"></div>
                 </div>
 
-                <div class="route-module">
-                    <div class="route-module-header">
-                        <div class="module-time">16:45-17:40</div>
-                        <div class="module-title">🎭 环球大巡游</div>
+                <div class="route-module" data-id="12" data-plan-end="17:40">
+                    <div class="module-content">
+                        <div class="module-info">
+                            <div class="route-module-header">
+                                <div class="module-time">16:45-17:40</div>
+                                <div class="module-title">🎭 环球大巡游</div>
+                            </div>
+                            <div class="module-details">
+                                <div class="detail-item">前往观赏点位 → 16:50占位</div>
+                                <div class="detail-item"><span class="route-highlight">★ 17:00场次巡游</span></div>
+                            </div>
+                        </div>
+                        <button class="complete-btn" onclick="markComplete(12)">✓ 完成</button>
                     </div>
-                    <div class="module-details">
-                        <div class="detail-item">前往观赏点位 → 16:50占位</div>
-                        <div class="detail-item"><span class="route-highlight">★ 17:00场次巡游</span></div>
-                    </div>
+                    <div class="time-status" id="status-12"></div>
                 </div>
 
-                <div class="route-module">
-                    <div class="route-module-header">
-                        <div class="module-time">17:40-18:40</div>
-                        <div class="module-title">🦖 不可驯服（步行15分钟+排队）</div>
+                <div class="route-module" data-id="13" data-plan-end="18:40">
+                    <div class="module-content">
+                        <div class="module-info">
+                            <div class="route-module-header">
+                                <div class="module-time">17:40-18:40</div>
+                                <div class="module-title">🦖 不可驯服（步行15分钟+排队）</div>
+                            </div>
+                            <div class="module-details">
+                                <div class="detail-item"><span class="route-highlight">★ 18:30场次表演</span></div>
+                            </div>
+                        </div>
+                        <button class="complete-btn" onclick="markComplete(13)">✓ 完成</button>
                     </div>
-                    <div class="module-details">
-                        <div class="detail-item"><span class="route-highlight">★ 18:30场次表演</span></div>
-                    </div>
+                    <div class="time-status" id="status-13"></div>
                 </div>
 
-                <div class="route-module">
-                    <div class="route-module-header">
-                        <div class="module-time">18:40-20:00</div>
-                        <div class="module-title">✨ 城堡灯光秀（步行30分钟返回）</div>
+                <div class="route-module" data-id="14" data-plan-end="20:00">
+                    <div class="module-content">
+                        <div class="module-info">
+                            <div class="route-module-header">
+                                <div class="module-time">18:40-20:00</div>
+                                <div class="module-title">✨ 城堡灯光秀（步行30分钟返回）</div>
+                            </div>
+                            <div class="module-details">
+                                <div class="detail-item">占位等候</div>
+                                <div class="detail-item"><span class="route-highlight">★ 19:30 / 19:45 / 20:00场次灯光秀</span></div>
+                            </div>
+                        </div>
+                        <button class="complete-btn" onclick="markComplete(14)">✓ 完成</button>
                     </div>
-                    <div class="module-details">
-                        <div class="detail-item">占位等候</div>
-                        <div class="detail-item"><span class="route-highlight">★ 19:30 / 19:45 / 20:00场次灯光秀</span></div>
-                    </div>
+                    <div class="time-status" id="status-14"></div>
                 </div>
 
-                <div class="route-module">
-                    <div class="route-module-header">
-                        <div class="module-time">20:00-闭园</div>
-                        <div class="module-title">🛍️ 哈利波特区逛街买周边</div>
+                <div class="route-module" data-id="15" data-plan-end="24:00">
+                    <div class="module-content">
+                        <div class="module-info">
+                            <div class="route-module-header">
+                                <div class="module-time">20:00-闭园</div>
+                                <div class="module-title">🛍️ 哈利波特区逛街买周边</div>
+                            </div>
+                            <div class="module-details">
+                                <div class="detail-item">离园 🎉</div>
+                            </div>
+                        </div>
+                        <button class="complete-btn" onclick="markComplete(15)">✓ 完成</button>
                     </div>
-                    <div class="module-details">
-                        <div class="detail-item">离园 🎉</div>
-                    </div>
+                    <div class="time-status" id="status-15"></div>
                 </div>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+            </div>
+            <div class="progress-text" id="progress-text">进度: 0/15</div>
+            <div style="text-align: center;">
+                <button class="reset-btn" onclick="resetAll()">🔄 重置进度</button>
             </div>
         </div>
 
@@ -1029,5 +1243,108 @@
             祝您环球影城之旅愉快！
         </div>
     </div>
+
+    <script>
+        var TOTAL_ITEMS = 15;
+
+        function parseTime(timeStr) {
+            var parts = timeStr.split(':');
+            var h = parseInt(parts[0]);
+            var m = parseInt(parts[1]);
+            return h * 60 + m;
+        }
+
+        function formatTime(minutes) {
+            var sign = minutes >= 0 ? '' : '-';
+            minutes = Math.abs(minutes);
+            var h = Math.floor(minutes / 60);
+            var m = minutes % 60;
+            if (h > 0) {
+                return sign + h + 'h' + m + 'm';
+            }
+            return sign + m + '分钟';
+        }
+
+        function getErrorClass(diff) {
+            if (Math.abs(diff) <= 5) return 'error-ontime';
+            if (diff < 0) return 'error-ahead';
+            return 'error-behind';
+        }
+
+        function getErrorText(diff) {
+            if (Math.abs(diff) <= 5) return '准时 ✓';
+            if (diff < 0) return '超前 🚀';
+            return '落后 ⚠️';
+        }
+
+        function markComplete(id) {
+            var module = document.querySelector('.route-module[data-id="' + id + '"]');
+            var planEnd = module.dataset.planEnd;
+            var now = new Date();
+            var actualMinutes = now.getHours() * 60 + now.getMinutes();
+            var planMinutes = parseTime(planEnd);
+            var diff = actualMinutes - planMinutes;
+
+            var statusEl = document.getElementById('status-' + id);
+            var timeStr = now.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+            var errorClass = getErrorClass(diff);
+            var errorText = getErrorText(diff);
+            var diffText = formatTime(diff);
+
+            statusEl.innerHTML = '✅ 完成时间: <strong>' + timeStr + '</strong> | 进度: <span class="' + errorClass + '">' + errorText + ' (' + diffText + ')</span>';
+
+            module.classList.add('completed');
+            var btn = module.querySelector('.complete-btn');
+            btn.classList.add('completed');
+            btn.textContent = '✓ 已完成';
+
+            var data = JSON.parse(localStorage.getItem('universal-progress') || '{}');
+            data[id] = { time: timeStr, diff: diff };
+            localStorage.setItem('universal-progress', JSON.stringify(data));
+
+            updateProgress();
+        }
+
+        function updateProgress() {
+            var data = JSON.parse(localStorage.getItem('universal-progress') || '{}');
+            var completed = Object.keys(data).length;
+            var percent = Math.round((completed / TOTAL_ITEMS) * 100);
+
+            document.getElementById('progress-fill').style.width = percent + '%';
+            document.getElementById('progress-text').textContent = '进度: ' + completed + '/' + TOTAL_ITEMS + ' (' + percent + '%)';
+        }
+
+        function resetAll() {
+            if (confirm('确定要重置所有进度吗？')) {
+                localStorage.removeItem('universal-progress');
+                location.reload();
+            }
+        }
+
+        function loadSavedProgress() {
+            var data = JSON.parse(localStorage.getItem('universal-progress') || '{}');
+
+            for (var id = 1; id <= TOTAL_ITEMS; id++) {
+                if (data[id]) {
+                    var module = document.querySelector('.route-module[data-id="' + id + '"]');
+                    module.classList.add('completed');
+                    var btn = module.querySelector('.complete-btn');
+                    btn.classList.add('completed');
+                    btn.textContent = '✓ 已完成';
+
+                    var statusEl = document.getElementById('status-' + id);
+                    var errorClass = getErrorClass(data[id].diff);
+                    var errorText = getErrorText(data[id].diff);
+                    var diffText = formatTime(data[id].diff);
+                    statusEl.innerHTML = '✅ 完成时间: <strong>' + data[id].time + '</strong> | 进度: <span class="' + errorClass + '">' + errorText + ' (' + diffText + ')</span>';
+                }
+            }
+
+            updateProgress();
+        }
+
+        window.onload = loadSavedProgress;
+    </script>
+
 </body>
 </html>
