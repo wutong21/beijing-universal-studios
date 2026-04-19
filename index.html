@@ -403,6 +403,14 @@
             flex: 1;
         }
 
+        .module-details {
+            display: none;
+        }
+
+        .route-module:hover .module-details {
+            display: block;
+        }
+
         .complete-btn {
             background: var(--md-primary);
             color: white;
@@ -551,34 +559,85 @@
                 font-size: 18px;
             }
 
-            /* 紧凑路线图移动端样式 */
+            /* 紧凑路线图移动端样式 - 极致压缩一屏放下 */
             .compact-route {
-                padding: 12px 14px;
-                margin-bottom: 20px;
+                padding: 8px 10px;
+                margin-bottom: 16px;
+            }
+
+            .route-header {
+                padding: 4px 0 6px;
+            }
+
+            .route-title {
+                font-size: 15px;
+            }
+
+            .route-subtitle {
+                font-size: 10px;
+                margin-top: 0;
             }
 
             .route-list {
-                gap: 3px;
+                gap: 2px;
             }
 
             .route-module {
-                padding: 6px 10px;
+                padding: 4px 6px;
+            }
+
+            .module-content {
+                gap: 4px;
             }
 
             .module-time {
-                font-size: 10px;
-                min-width: 52px;
+                font-size: 9px;
+                min-width: 48px;
             }
 
             .module-title {
-                font-size: 12px;
+                font-size: 11px;
             }
 
             .module-details {
-                margin-left: 58px;
+                display: none;
+                margin-left: 52px;
+                margin-top: 2px;
+                gap: 0;
             }
 
             .detail-item {
+                font-size: 9px;
+                padding: 1px 0;
+            }
+
+            .complete-btn {
+                padding: 2px 8px;
+                font-size: 9px;
+                border-radius: 10px;
+                margin-left: 4px;
+            }
+
+            .time-status {
+                font-size: 8px;
+                margin-top: 2px;
+                margin-left: 52px;
+                gap: 4px;
+            }
+
+            .progress-bar {
+                height: 4px;
+                margin-top: 8px;
+                margin-bottom: 4px;
+            }
+
+            .progress-text {
+                font-size: 10px;
+                margin-bottom: 6px;
+            }
+
+            .reset-btn {
+                padding: 4px 12px;
                 font-size: 10px;
             }
         }
