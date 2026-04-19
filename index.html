@@ -1640,6 +1640,14 @@
                             waitTime: nearest.waitMinutes > 0 ? nearest.waitMinutes : 0,
                             arriveTime: minutesToTime(startTime)
                         });
+                        
+                        var detailItem = module.querySelector('.route-highlight');
+                        if (detailItem) {
+                            var suffix = '表演';
+                            if (showKey === '环球大巡游') suffix = '场次巡游';
+                            if (showKey === '灯光秀') suffix = '场次灯光秀';
+                            detailItem.textContent = '★ ' + nearest.time + suffix;
+                        }
                     }
                 }
                 
