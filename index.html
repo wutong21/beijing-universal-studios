@@ -1502,6 +1502,15 @@
 
         var draggedElement = null;
 
+        var SHOW_SCHEDULE = {
+            '未来水世界': ['12:15', '13:45', '15:35', '16:30', '17:15'],
+            '三强争霸赛': ['11:00', '12:30', '14:00', '15:30', '17:00'],
+            '青蛙合唱团': ['11:30', '13:00', '14:30', '16:00', '17:30'],
+            '环球大巡游': ['17:00'],
+            '不可驯服': ['16:15', '17:45', '19:00', '20:30'],
+            '灯光秀': ['21:00', '21:15', '21:30']
+        };
+
         function initDragAndDrop() {
             var modules = document.querySelectorAll('.route-module');
             modules.forEach(function(module) {
@@ -1570,10 +1579,36 @@
             return parseInt(parts[0]) * 60 + parseInt(parts[1]);
         }
 
+        function findNearestShow(showName, arrivalMinutes) {
+            var times = SHOW_SCHEDULE[showName];
+            if (!times) return null;
+            
+            for (var i = 0; i < times.length; i++) {
+                var showMin = timeToMinutes(times[i]);
+                if (showMin >= arrivalMinutes - 15) {
+                    return {
+                        time: times[i],
+                        waitMinutes: showMin - arrivalMinutes
+                    };
+                }
+            }
+            return null;
+        }
+
+        function getShowKey(title) {
+            for (var key in SHOW_SCHEDULE) {
+                if (title.indexOf(key) >= 0) {
+                    return key;
+                }
+            }
+            return null;
+        }
+
         function recalculateAllTimes() {
             var modules = document.querySelectorAll('.route-module');
             var currentTime = 8 * 60;
             var conflicts = [];
+            var recommendations = [];
             
             document.getElementById('conflict-container').innerHTML = '';
             modules.forEach(function(mod) {
@@ -1582,26 +1617,29 @@
 
             modules.forEach(function(module) {
                 var duration = parseInt(module.getAttribute('data-duration')) || 30;
-                var fixedTime = module.getAttribute('data-fixed-time');
-                var id = module.getAttribute('data-id');
                 var moduleTitle = module.querySelector('.module-title').textContent;
                 
                 var startTime = currentTime;
                 var endTime = currentTime + duration;
                 
-                if (fixedTime) {
-                    var fixedMinutes = timeToMinutes(fixedTime);
-                    var timeDiff = fixedMinutes - startTime;
-                    
-                    if (timeDiff < 0) {
+                var showKey = getShowKey(moduleTitle);
+                if (showKey) {
+                    var nearest = findNearestShow(showKey, startTime);
+                    if (nearest && nearest.waitMinutes < -15) {
                         conflicts.push({
-                            module: module,
                             title: moduleTitle,
-                            fixedTime: fixedTime,
+                            showKey: showKey,
                             currentArrival: minutesToTime(startTime),
-                            delay: -timeDiff
+                            delay: -nearest.waitMinutes
                         });
                         module.classList.add('time-conflict');
+                    } else if (nearest) {
+                        recommendations.push({
+                            title: moduleTitle,
+                            showTime: nearest.time,
+                            waitTime: nearest.waitMinutes > 0 ? nearest.waitMinutes : 0,
+                            arriveTime: minutesToTime(startTime)
+                        });
                     }
                 }
                 
@@ -1611,14 +1649,27 @@
                 currentTime = endTime;
             });
 
+            var warningHtml = '';
+            
             if (conflicts.length > 0) {
-                var warningHtml = '<div class="conflict-warning">⚠️ <strong>演出时间冲突提醒：</strong><br>';
+                warningHtml += '<div class="conflict-warning">⚠️ <strong>赶不上这场了，建议调整顺序：</strong><br>';
                 conflicts.forEach(function(c) {
-                    warningHtml += '• ' + c.title + '：预计 ' + c.currentArrival + ' 到达，赶不上 ' + c.fixedTime + ' 的场次，晚了 ' + c.delay + ' 分钟<br>';
+                    warningHtml += '• ' + c.title + '：预计 ' + c.currentArrival + ' 到达，已错过最早场次，晚了约 ' + c.delay + ' 分钟<br>';
                 });
                 warningHtml += '</div>';
-                document.getElementById('conflict-container').innerHTML = warningHtml;
             }
+            
+            if (recommendations.length > 0 && conflicts.length === 0) {
+                warningHtml += '<div class="conflict-warning" style="background:#e6f4ea;border-color:#34a853;color:#137333">✅ <strong>当前排序完美！推荐场次：</strong><br>';
+                recommendations.forEach(function(r) {
+                    warningHtml += '• ' + r.title + '：' + r.arriveTime + ' 到达 → 看 ' + r.showTime + ' 场';
+                    if (r.waitTime > 0) warningHtml += '（等 ' + r.waitTime + ' 分钟）';
+                    warningHtml += '<br>';
+                });
+                warningHtml += '</div>';
+            }
+            
+            document.getElementById('conflict-container').innerHTML = warningHtml;
         }
 
         function loadSavedProgress() {
